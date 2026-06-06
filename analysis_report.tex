@@ -1,0 +1,786 @@
+% Options for packages loaded elsewhere
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  letterpaper,
+  DIV=11,
+  numbers=noendperiod]{scrartcl}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+% Make \paragraph and \subparagraph free-standing
+\makeatletter
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}{
+    \@ifstar
+      \xxxParagraphStar
+      \xxxParagraphNoStar
+  }
+  \newcommand{\xxxParagraphStar}[1]{\oldparagraph*{#1}\mbox{}}
+  \newcommand{\xxxParagraphNoStar}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}{
+    \@ifstar
+      \xxxSubParagraphStar
+      \xxxSubParagraphNoStar
+  }
+  \newcommand{\xxxSubParagraphStar}[1]{\oldsubparagraph*{#1}\mbox{}}
+  \newcommand{\xxxSubParagraphNoStar}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+\makeatother
+
+
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+
+
+
+
+
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+
+ 
+
+
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{anyfontsize}
+\KOMAoption{captions}{tableheading}
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={PIRL data exercise report},
+  pdfauthor={Martin Chen (bc3517@nyu.edu)},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+
+\title{PIRL data exercise report}
+\author{Martin Chen (bc3517@nyu.edu)}
+\date{2026-02-23}
+\begin{document}
+\maketitle
+
+\renewcommand*\contentsname{Table of contents}
+{
+\hypersetup{linkcolor=}
+\setcounter{tocdepth}{3}
+\tableofcontents
+}
+
+\newpage{}
+
+\section{Introduction}\label{introduction}
+
+\subsection{Structure of the analysis
+folder}\label{structure-of-the-analysis-folder}
+
+\begin{itemize}
+\item
+  \texttt{\_targets}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    A folder containing all the outputs from \texttt{\_targets.R}. It
+    can only be loaded to the R environment using the \texttt{targets}
+    package in R
+  \item
+    If you want to remove this folder and recreate another one, please
+    set the working directory to the location of \texttt{\_targets.R},
+    execute \texttt{targets::tar\_destroy()}, and then run
+    \texttt{targets::tar\_make()}
+  \end{itemize}
+\item
+  \texttt{\_targets.R}
+
+  \begin{itemize}
+  \item
+    An \texttt{.R} script to reproduce the analysis. To reproduce the
+    analysis, you can set the working directory to the location of this
+    script and execute \texttt{targets::tar\_make()} on the console.
+  \item
+    If you don't want to reproduce the results, you can just set the
+    working directory to the location of this script and execute the R
+    command below on the console to check the established results.
+  \end{itemize}
+\end{itemize}
+
+\begin{verbatim}
+if (!require('targets', character.only = TRUE)) {
+  install.packages('targets', dependencies = TRUE)
+  library('targets')
+}
+
+library(targets)
+
+# cleaed dataset for analysis
+tar_load(us_datasets)
+# logistic regression outcome of changed_behaviors ~ outside_spaces
+tar_load(result_logistic)
+# logistic regression outcome of changed_behaviors ~ outside_spaces + income
+tar_load(result_logistic_income)
+# chi-suqared test results of changed_behaviors * outside_spaces
+tar_load(chisq_bc_os)
+# poissson regression (w/ robust standard error) outcome of changed_behaviors ~ outside_spaces
+tar_load(result_poisson_RSE)
+# probit regression outcome of changed_behaviors ~ outside_spaces
+tar_load(result_probit)
+\end{verbatim}
+
+\begin{itemize}
+\item
+  \texttt{R}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    A folder containing all the \texttt{R} functions used in the
+    \texttt{\_targets.R} script.
+  \end{itemize}
+\item
+  \texttt{raw\_data}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Raw datasets and codebooks for this data exercise.
+  \end{itemize}
+\end{itemize}
+
+\section{Question 1 \& 2: Data input and
+cleaning}\label{question-1-2-data-input-and-cleaning}
+
+\subsection{Data input}\label{data-input}
+
+\begin{itemize}
+\tightlist
+\item
+  file location: ``raw\_data/Data\_Exercise\_CSV.csv''
+\end{itemize}
+
+\subsection{Data cleaning}\label{data-cleaning}
+
+\begin{itemize}
+\tightlist
+\item
+  Martin chose the country ``US.''
+
+  \begin{itemize}
+  \tightlist
+  \item
+    After the selection, the dataset had 1055 observations.
+  \item
+    Please refer to for Table~\ref{tbl-of-us-summary} summary statistics
+  \end{itemize}
+\end{itemize}
+
+\begingroup
+\fontsize{12.0pt}{14.0pt}\selectfont
+\setlength{\LTpost}{0mm}
+
+\begin{longtable}{lc}
+
+\caption{\label{tbl-of-us-summary}Summary statistics for observation in
+the U.S.}
+
+\tabularnewline
+
+\toprule
+ & \multicolumn{1}{c}{{U.S.}} \\ 
+\cmidrule(lr){2-2}
+\textbf{Characteristic} & \textbf{N = 1,055}\textsuperscript{\textit{1}} \\ 
+\midrule\endhead\addlinespace[2.5pt]
+Changes in behaviors &  \\ 
+    No & 128 (12\%) \\ 
+    Yes & 927 (88\%) \\ 
+Income quantiles of participants &  \\ 
+    First quintile & 181 (17\%) \\ 
+    Second quintile & 196 (19\%) \\ 
+    Third quintile & 218 (21\%) \\ 
+    Fourth quintile & 245 (23\%) \\ 
+    Fifth quintile & 199 (19\%) \\ 
+    Prefer not to answer & 16 (1.5\%) \\ 
+Access to outside space at home &  \\ 
+    No & 162 (15\%) \\ 
+    Yes & 893 (85\%) \\ 
+\bottomrule
+
+\end{longtable}
+
+\begin{minipage}{\linewidth}
+\vspace{.05em}
+\textsuperscript{\textit{1}}n (\%)\\
+\end{minipage}
+\endgroup
+
+\section{Question 3: Regression on behavior change and access to outside
+space}\label{question-3-regression-on-behavior-change-and-access-to-outside-space}
+
+\subsection{Model used}\label{model-used}
+
+\begin{itemize}
+\item
+  Martin chose a logistic regression model to estimate the relationship
+  between behavior change and access to outside space.
+
+  \[
+  log(\frac{P_{behavior\ change = 1}}{1- P_{behavior\ change = 1}}) \sim access\ to\ outside\ space
+  \]
+\item
+  Regression result
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Please refer to Table~\ref{tbl-of-regression-single} for detailed
+    regression results
+  \end{itemize}
+\end{itemize}
+
+\begin{table}
+
+\caption{\label{tbl-of-regression-single}Regression result of question
+3}
+
+\centering{
+
+\fontsize{12.0pt}{14.0pt}\selectfont
+\begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}lcccccc}
+\toprule
+ & \multicolumn{3}{c}{{\textbf{Univariate Model}}} & \multicolumn{3}{c}{{\textbf{Income added}}} \\ 
+\cmidrule(lr){2-4} \cmidrule(lr){5-7}
+\textbf{Characteristic} & \textbf{OR} & \textbf{95\% CI} & \textbf{p-value} & \textbf{OR} & \textbf{95\% CI} & \textbf{p-value} \\ 
+\midrule\addlinespace[2.5pt]
+Access to outside space at home &  &  &  &  &  &  \\ 
+    No & 1.00 & — &  & 1.00 & — &  \\ 
+    Yes & 1.94 & 1.23, 3.00 & 0.003 & 1.59 & 0.99, 2.52 & 0.049 \\ 
+Income quantile &  &  &  &  &  &  \\ 
+    First quintile &  &  &  & 1.00 & — &  \\ 
+    Second quintile &  &  &  & 0.83 & 0.49, 1.40 & 0.5 \\ 
+    Third quintile &  &  &  & 1.57 & 0.88, 2.83 & 0.13 \\ 
+    Fourth quintile &  &  &  & 2.26 & 1.23, 4.26 & 0.010 \\ 
+    Fifth quintile &  &  &  & 3.62 & 1.76, 8.06 & <0.001 \\ 
+    Prefer not to answer &  &  &  & 0.43 & 0.14, 1.44 & 0.14 \\ 
+\bottomrule
+\end{tabular*}
+\begin{minipage}{\linewidth}
+\vspace{.05em}
+Abbreviations: CI = Confidence Interval, OR = Odds Ratio\\
+\end{minipage}
+
+}
+
+\end{table}%
+
+\subsection{Alternative models}\label{alternative-models}
+
+\begin{itemize}
+\tightlist
+\item
+  Relative to probit, logit has a practical advantage:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Logit coefficients have a log-odds interpretation, which is
+    sometimes more intuitive.
+  \end{itemize}
+\item
+  Relative to Poisson regression with robust standard errors
+
+  \begin{itemize}
+  \tightlist
+  \item
+    The outcome is not a count, so the Poisson likelihood is
+    misspecified.
+  \item
+    Interpretation is less intuitive than the logit model.
+  \end{itemize}
+\item
+  Compared with the raw answer to outside space access
+
+  \begin{itemize}
+  \tightlist
+  \item
+    In the original survey questionnaire, the answer to the question
+    about outside space included 7 choices.
+  \item
+    Conversion to a binary variable makes it conceptually simple and
+    policy-relevant: does having any access to outside space matter,
+    relative to having none?
+  \item
+    The conversion also simplifies model interpretation.
+  \end{itemize}
+\end{itemize}
+
+\section{Question 4}\label{question-4}
+
+\subsection{Model interpretation}\label{model-interpretation}
+
+\begin{itemize}
+\tightlist
+\item
+  Compared with participants without access to the outside space, those
+  with access had a higher odds of changing their behavior by a factor
+  of 1.94 on average in our United States samples.
+\end{itemize}
+
+\subsection{Discussion on causal
+interpretation}\label{discussion-on-causal-interpretation}
+
+\begin{itemize}
+\item
+  Given the model design and the dataset's background, Martin did not
+  find sufficient evidence to support a causal interpretation.
+\item
+  \texttt{outside\_space} is not randomly assigned. Instead, it is an
+  outcome of participants' housing choices and constraints, shaped by
+  various factors. Therefore, the estimated coefficient reflected the
+  effect of outdoor space and the influence of omitted variables related
+  to it.
+\end{itemize}
+
+\subsection{Omitted variables}\label{omitted-variables}
+
+\begin{itemize}
+\item
+  A range of omitted variables could be correlated with outside access.
+
+  \begin{itemize}
+  \item
+    Housing type (houses versus apartments), urban density, neighborhood
+    characteristics, household size, presence of children, education,
+    ability to work from home, local COVID-19 prevalence, and local
+    policy stringency are all plausibly correlated with both access to
+    outside space and behavior change
+  \item
+    Omitting these variables could lead to an upward bias in the
+    coefficient for outside space, as shown in the model with income
+    quantiles.
+  \end{itemize}
+\end{itemize}
+
+\subsection{Endogenity}\label{endogenity}
+
+\begin{itemize}
+\tightlist
+\item
+  Outside space is endogenous because it is determined by residential
+  location, housing quality, and household resources, all of which may
+  affect behavior change.
+\end{itemize}
+
+\subsection{Ideal experiment}\label{ideal-experiment}
+
+\begin{itemize}
+\item
+  An ideal experiment to identify the causal effect of outside space
+  would randomly assign individuals to otherwise identical housing units
+  that differ only in access to outside space, and then measure
+  subsequent behavior change.
+\item
+  This could be carried out through randomized housing lotteries or
+  quasi-random assignment of public or subsidized housing units.
+\item
+  In the current analysis, access to outside space was non-random and
+  observational. Martin thought some confounding factors were
+  unobserved.
+\end{itemize}
+
+\subsection{Threats to identification}\label{threats-to-identification}
+
+\begin{itemize}
+\item
+  Several threats to identification are non-random residential sorting,
+  unobserved risk preferences, differential exposure to information, and
+  local policy variation correlated with housing characteristics.
+
+  \begin{itemize}
+  \item
+    One solution is to add more control variables, including detailed
+    housing characteristics, neighborhood fixed effects, local COVID-19
+    case rates, and policy measures.
+  \item
+    Another is to use individual panel data to allow for individual
+    fixed effects.
+  \end{itemize}
+\end{itemize}
+
+\subsection{Direction of bias}\label{direction-of-bias}
+
+\begin{itemize}
+\item
+  Martin believes the bias could be upwards.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Failure to control other confounders may exaggerate the effects of
+    outside
+  \end{itemize}
+\end{itemize}
+
+\subsection{Possible use of instrument variables
+(IV)}\label{possible-use-of-instrument-variables-iv}
+
+\begin{itemize}
+\item
+  A possible IV is waitlist-based allocation of units with and without
+  outdoor space, such as affordable housing policies in cities like NYC
+  and Houston.
+\item
+  The ideal IV should only affect behavior change through access to
+  outside space and not through other ways.
+\end{itemize}
+
+\section{Question 5}\label{question-5}
+
+\subsection{Model interpretation}\label{model-interpretation-1}
+
+\begin{itemize}
+\tightlist
+\item
+  Compared with participants without access to the outside, those with
+  access had a 1.59-fold increase in the odds of changing their
+  behavior, on average, in our United States samples, controlling for
+  all other covariates.
+\end{itemize}
+
+\subsection{Differences from step 3}\label{differences-from-step-3}
+
+\begin{itemize}
+\item
+  The odds ratio for \texttt{outside\ space} was lower, indicating that
+  its effect was weaker when income quantile was controlled for in the
+  model.
+\item
+  The p-value for \texttt{outside\ space} was higher, indicating that
+  Martin had weaker evidence against the null hypothesis that the
+  outside space has no effect on the behavior change.
+\item
+  Including income directly addresses one important source of
+  endogeneity: selection into housing with outside space based on
+  socioeconomic status. However, the estimate should still be
+  interpreted as correlational rather than causal.
+\end{itemize}
+
+\section{Question 6}\label{question-6}
+
+\subsection{Policy Implications}\label{policy-implications}
+
+\begin{itemize}
+\item
+  In the short run, policies should focus on expanding effective access
+  to safe outdoor space, particularly for households living in dense or
+  space-constrained housing. Potential interventions include keeping
+  parks, playgrounds, and open streets accessible during public health
+  emergencies; creating temporary outdoor areas near high-density
+  housing (e.g., pop-up pedestrian zones or shared courtyards); and
+  providing clear guidance to building managers to keep shared outdoor
+  spaces open and safely managed rather than fully closed. These
+  policies may be effective because access to outdoor space can reduce
+  the psychological and practical costs of staying home, making
+  compliance with broader behavioral guidelines more feasible.
+\item
+  In the long run, the findings point to housing and urban planning
+  policies that incorporate outdoor access as a public health input.
+  Examples include encouraging or subsidizing the construction of
+  balconies, terraces, or ventilated shared courtyards in multi-family
+  housing; revising zoning or building codes to prioritize green space
+  in high-density areas; and targeting housing improvements toward
+  lower-income neighborhoods that are less likely to have private
+  outdoor access. Such policies may have lasting benefits beyond
+  pandemics by improving mental health, well-being, and resilience to
+  future public health shocks.
+\end{itemize}
+
+\subsection{Additional Quantitative Data
+Collection}\label{additional-quantitative-data-collection}
+
+\begin{itemize}
+\item
+  First, housing characteristics would be critical. Data on housing type
+  (houses or apartments), number of rooms, crowding (rooms per person),
+  ownership status, and whether outdoor space is private or shared would
+  allow for a more precise characterization of living conditions and
+  help distinguish the mechanisms through which outside space operates.
+\item
+  Second, individual and household characteristics such as age,
+  education, employment status, ability to work from home, household
+  size, presence of children or elderly members, and baseline health
+  risk would help account for differences in both exposure risk and
+  capacity to change behavior. These variables would reduce
+  omitted-variable bias and enable heterogeneity analyses across
+  demographic groups.
+\item
+  Third, local context variables, such as neighborhood density, urban
+  versus suburban location, local COVID-19 case rates, and policy
+  stringency measures, would help separate the effect of outside space
+  from broader environmental and policy conditions that influence
+  behavior.
+\item
+  Finally, behavioral detail and dynamics would improve interpretation.
+  Rather than a single indicator for behavior change, more granular
+  measures (e.g., masking, social distancing, avoidance of gatherings,
+  time spent at home) and panel data tracking individuals over time
+  would allow researchers to examine which behaviors are most affected
+  by outside space and whether effects persist or evolve as conditions
+  change.
+\end{itemize}
+
+\section{Question 7}\label{question-7}
+
+\subsection{Methods}\label{methods}
+
+\begin{itemize}
+\tightlist
+\item
+  I would collect qualitative data through in-depth, semi-structured
+  interviews, potentially supplemented by ethnographic observation.
+\end{itemize}
+
+\subsection{Questions asked}\label{questions-asked}
+
+\begin{itemize}
+\item
+  I would conduct open-ended interviews with individuals or households,
+  using a semi-structured interview guide.
+\item
+  First, I would ask respondents to describe how their daily behaviors
+  changed during the pandemic, including specific behaviors such as
+  staying home, avoiding gatherings, mask use, and use of public spaces.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    This helps clarify what ``behavior change'' means in practice and
+    whether different respondents interpret it similarly.
+  \end{itemize}
+\item
+  Second, I would ask detailed questions about housing and outside space
+
+  \begin{itemize}
+  \item
+    What types of outside space they had access to (private, shared,
+    public nearby)
+  \item
+    How frequently and for what purposes they used these spaces
+  \item
+    Whether outside space affected their willingness or ability to
+    comply with public health guidance
+  \item
+    These questions are designed to uncover the mechanisms through which
+    outside space may facilitate behavior change
+  \end{itemize}
+\item
+  Third, I would investigate constraints and trade-offs, asking
+  respondents what made behavior change difficult, what they felt they
+  were giving up, and how housing conditions shaped those trade-offs.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    This can reveal barriers that are difficult to quantify, such as
+    mental health strain, caregiving responsibilities, or household
+    conflicts.
+  \end{itemize}
+\item
+  Finally, I would ask respondents how local rules, building management
+  decisions, and neighborhood norms influenced their behavior.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    These questions help contextualize individual decisions within
+    broader institutional and social environments.
+  \end{itemize}
+\end{itemize}
+
+\subsection{Sampling strategy}\label{sampling-strategy}
+
+\begin{itemize}
+\tightlist
+\item
+  I would use purposeful sampling, focusing on respondents with key
+  characteristics (e.g., high versus low income levels, single apartment
+  or family house, urban versus suburban areas)
+\end{itemize}
+
+\subsection{How qualitative data augments the quantitative
+analysis}\label{how-qualitative-data-augments-the-quantitative-analysis}
+
+\begin{itemize}
+\item
+  First, qualitative analysis can interpret the regression coefficients
+  by explaining how behavior changed in real life and how outside space
+  affected it.
+\item
+  Second, qualitative analysis can help identify omitted variables, such
+  as social norms, building rules, or conditions of personal well-being.
+\end{itemize}
+
+\subsection{Ethnographic observation}\label{ethnographic-observation}
+
+\begin{itemize}
+\tightlist
+\item
+  Yes. I would incorporate an ethnographic observation, such as
+  observing public spaces in apartment buildings and neighborhoods.
+\end{itemize}
+
+\subsection{Values of ethnographic
+observation}\label{values-of-ethnographic-observation}
+
+\begin{itemize}
+\item
+  Ethnographic observations could document the condition of outdoor
+  spaces, how they were actually used, and the nature of social
+  interactions.
+\item
+  These observations could help researchers identify factors respondents
+  ignored, such as their actual behaviors rather than their stated ones.
+\end{itemize}
+
+\subsection{Effects on answers to step
+6}\label{effects-on-answers-to-step-6}
+
+\begin{itemize}
+\item
+  The observations could help understand the mechanisms and reasons
+  behind the effects of the external environment on behavior change.
+\item
+  For example, simply expanding nominal access to public spaces may be
+  insufficient and could even be counterproductive if those spaces are
+  perceived as unsafe or become associated with disorder. Effective
+  policy design therefore requires ensuring that outdoor spaces are
+  safe, well-managed, and socially acceptable in practice.
+\end{itemize}
+
+
+
+
+\end{document}

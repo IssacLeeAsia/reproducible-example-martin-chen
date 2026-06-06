@@ -1,0 +1,10 @@
+name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
+poisson_RSE|function|8c620950465172df
+pirl_raw_cleaning|function|32e252d5dece2740
+us_datasets|stem|ae62bd42f0f1290a|37bec39da01cd4ea|9741d5a90b1fcf5d|1699501550||t20473.2407523148s|s2312b|2312|rds|local|vector|||22.006||
+report|stem|f1cc47c1835004b4|fb303a1daa624744|2c530c1562a7fbd1|787668912|analysis_report.pdf*analysis_report.qmd|t20500.8432924767s|s84038b|84038|file|local|vector|||13.93||
+result_poisson_RSE|stem|b65d9afcaa386d26|c9256a86a5b01ee3|7f86d3c8d4aeb50f|821855165||t20473.2407523148s|s356b|356|rds|local|vector|||0.849||
+result_logistic|stem|f38c9871b2200a28|b240900ef4643436|dc040b7691e411c6|-2093602093||t20473.2407523148s|s14395b|14395|rds|local|vector|||0.001||
+result_probit|stem|aafdb4139fe30b5e|2382090e3036e9cd|dc040b7691e411c6|-1396106245||t20473.2407523148s|s16749b|16749|rds|local|vector|||0.002||
+result_logistic_income|stem|1b3d430ff319e391|a1924440fea5480e|dc040b7691e411c6|192961447||t20473.2407638889s|s26153b|26153|rds|local|vector|||0.002||
+chisq_bc_os|stem|dfcc4b3737c6a10a|a147900fa410de52|dc040b7691e411c6|1124403797||t20473.2407638889s|s536b|536|rds|local|vector|||0.001||

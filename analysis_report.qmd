@@ -1,0 +1,348 @@
+---
+title: "PIRL data exercise report"
+author: "Martin Chen (bc3517@nyu.edu)"
+date: today
+format:
+  pdf:
+    fig-pos: H
+    keep-tex: true
+    includes:
+      in_header: 'gt_packages.sty'
+    toc: true
+    toc-depth: 3
+crossref:
+  tbl-prefix: "Table"
+  fig-prefix: "Figure"
+execute:
+  echo: false
+  warning: false
+  message: false
+  # ensure chunks run from the project root (where _targets/ lives)
+  dir: project
+pdf-engine: lualatex
+editor: visual
+---
+
+```{r}
+#| label: load-packages
+#| message: false
+
+
+
+rm(list = ls())
+
+options(knitr.duplicate.label = "allow")
+options(scipen = 999) # Prevents R from using scientific notation for most cases
+options(digits = 3)  # Optionally set the default number of digits to display
+
+
+
+library(kableExtra)
+library(tidyverse)
+library(targets)
+library(gtsummary)
+library(gt)
+library(polycor)
+library(ggrepel)
+library(ggtext)
+library(broom.mixed)
+
+tar_load(tar_objects())
+```
+
+{{< pagebreak >}}
+
+# Introduction
+
+## Structure of the analysis folder
+
+-   `_targets`
+
+    -   A folder containing all the outputs from `_targets.R`. It can only be loaded to the R environment using the `targets` package in R
+    -   If you want to remove this folder and recreate another one, please set the working directory to the location of `_targets.R`, execute `targets::tar_destroy()`, and then run `targets::tar_make()`
+
+-   `_targets.R`
+
+    -   An `.R` script to reproduce the analysis. To reproduce the analysis, you can set the working directory to the location of this script and execute `targets::tar_make()` on the console.
+
+    -   If you don't want to reproduce the results, you can just set the working directory to the location of this script and execute the R command below on the console to check the established results.
+
+```         
+if (!require('targets', character.only = TRUE)) {
+  install.packages('targets', dependencies = TRUE)
+  library('targets')
+}
+
+library(targets)
+
+# cleaed dataset for analysis
+tar_load(us_datasets)
+# logistic regression outcome of changed_behaviors ~ outside_spaces
+tar_load(result_logistic)
+# logistic regression outcome of changed_behaviors ~ outside_spaces + income
+tar_load(result_logistic_income)
+# chi-suqared test results of changed_behaviors * outside_spaces
+tar_load(chisq_bc_os)
+# poissson regression (w/ robust standard error) outcome of changed_behaviors ~ outside_spaces
+tar_load(result_poisson_RSE)
+# probit regression outcome of changed_behaviors ~ outside_spaces
+tar_load(result_probit)
+```
+
+-   `R`
+
+    -   A folder containing all the `R` functions used in the `_targets.R` script.
+
+-   `raw_data`
+
+    -   Raw datasets and codebooks for this data exercise.
+
+# Question 1 & 2: Data input and cleaning
+
+## Data input
+
+-   file location: "raw_data/Data_Exercise_CSV.csv"
+
+## Data cleaning
+
+-   Martin chose the country "US."
+    -   After the selection, the dataset had `{r} print(dim(us_datasets$dataset)[1])` observations.
+    -   Please refer to for @tbl-of-us-summary summary statistics
+
+```{r}
+#| label: tbl-of-us-summary
+#| tbl-cap: Summary statistics for observation in the U.S.
+
+
+regression_data_summary = 
+  us_datasets$dataset |> 
+  select(changed_behaviors, income, outside_space) |> 
+  tbl_summary( # by = exam ,
+    statistic = list(
+      gtsummary::all_continuous() ~ "{mean} ({sd})",
+      gtsummary::all_categorical() ~ "{n} ({p}%)"
+    ),# split table by group
+    # missing = "no", # don't list missing data separately
+    digits = gtsummary::all_continuous() ~ 2, 
+   ##add in labels
+     label = list(
+       changed_behaviors = "Changes in behaviors",
+       income = "Income quantiles of participants",
+       outside_space = "Access to outside space at home"
+     ),
+   type = list(
+     changed_behaviors ~ "categorical",
+     income ~ "categorical",
+     outside_space ~ "categorical"
+    ) 
+) |>
+  gtsummary::modify_spanning_header(
+    gtsummary::all_stat_cols() ~ "U.S."
+  )  |> 
+  as_gt() |>  
+  gt::tab_options(latex.use_longtable = TRUE,
+                  latex.header_repeat = TRUE)
+
+
+regression_data_summary
+```
+
+# Question 3: Regression on behavior change and access to outside space
+
+## Model used
+
+-   Martin chose a logistic regression model to estimate the relationship between behavior change and access to outside space.
+
+    $$
+    log(\frac{P_{behavior\ change = 1}}{1- P_{behavior\ change = 1}}) \sim access\ to\ outside\ space
+    $$
+
+-   Regression result
+
+    -   Please refer to @tbl-of-regression-single for detailed regression results
+
+```{r}
+#| label: tbl-of-regression-single
+#| tbl-cap: Regression result of question 3
+
+regression_tbl_1 = 
+  tbl_regression(
+    result_logistic,
+    exponentiate = TRUE,
+    label = list(
+       outside_space = "Access to outside space at home"
+     ),
+    add_estimate_to_reference_rows = TRUE)
+  
+    
+regression_tbl_2 = 
+  tbl_regression(
+    result_logistic_income,
+    exponentiate = TRUE,
+    label = list(
+       outside_space = "Access to outside space at home",
+       income = "Income quantile"
+     ),
+    add_estimate_to_reference_rows = TRUE)
+
+tbl_1 = tbl_merge(
+  tbls = list(regression_tbl_1, regression_tbl_2),
+  tab_spanner = c("**Univariate Model**", "**Income added**") # Add income
+)
+
+tbl_1 
+```
+
+## Alternative models
+
+-   Relative to probit, logit has a practical advantage:
+    -   Logit coefficients have a log-odds interpretation, which is sometimes more intuitive.
+-   Relative to Poisson regression with robust standard errors
+    -   The outcome is not a count, so the Poisson likelihood is misspecified.
+    -   Interpretation is less intuitive than the logit model.
+-   Compared with the raw answer to outside space access
+    -   In the original survey questionnaire, the answer to the question about outside space included 7 choices.
+    -   Conversion to a binary variable makes it conceptually simple and policy-relevant: does having any access to outside space matter, relative to having none?
+    -   The conversion also simplifies model interpretation.
+
+# Question 4
+
+## Model interpretation
+
+-   Compared with participants without access to the outside space, those with access had a higher odds of changing their behavior by a factor of 1.94 on average in our United States samples.
+
+## Discussion on causal interpretation
+
+-   Given the model design and the dataset's background, Martin did not find sufficient evidence to support a causal interpretation.
+
+-   `outside_space` is not randomly assigned. Instead, it is an outcome of participants' housing choices and constraints, shaped by various factors. Therefore, the estimated coefficient reflected the effect of outdoor space and the influence of omitted variables related to it.
+
+## Omitted variables
+
+-   A range of omitted variables could be correlated with outside access.
+
+    -   Housing type (houses versus apartments), urban density, neighborhood characteristics, household size, presence of children, education, ability to work from home, local COVID-19 prevalence, and local policy stringency are all plausibly correlated with both access to outside space and behavior change
+
+    -   Omitting these variables could lead to an upward bias in the coefficient for outside space, as shown in the model with income quantiles.
+
+## Endogenity
+
+-   Outside space is endogenous because it is determined by residential location, housing quality, and household resources, all of which may affect behavior change.
+
+## Ideal experiment
+
+-   An ideal experiment to identify the causal effect of outside space would randomly assign individuals to otherwise identical housing units that differ only in access to outside space, and then measure subsequent behavior change.
+
+-   This could be carried out through randomized housing lotteries or quasi-random assignment of public or subsidized housing units.
+
+-   In the current analysis, access to outside space was non-random and observational. Martin thought some confounding factors were unobserved.
+
+## Threats to identification
+
+-   Several threats to identification are non-random residential sorting, unobserved risk preferences, differential exposure to information, and local policy variation correlated with housing characteristics.
+
+    -   One solution is to add more control variables, including detailed housing characteristics, neighborhood fixed effects, local COVID-19 case rates, and policy measures.
+
+    -   Another is to use individual panel data to allow for individual fixed effects.
+
+## Direction of bias
+
+-   Martin believes the bias could be upwards.
+
+    -   Failure to control other confounders may exaggerate the effects of outside
+
+## Possible use of instrument variables (IV)
+
+-   A possible IV is waitlist-based allocation of units with and without outdoor space, such as affordable housing policies in cities like NYC and Houston.
+
+-   The ideal IV should only affect behavior change through access to outside space and not through other ways.
+
+# Question 5
+
+## Model interpretation
+
+-   Compared with participants without access to the outside, those with access had a 1.59-fold increase in the odds of changing their behavior, on average, in our United States samples, controlling for all other covariates.
+
+## Differences from step 3
+
+-   The odds ratio for `outside space` was lower, indicating that its effect was weaker when income quantile was controlled for in the model.
+
+-   The p-value for `outside space` was higher, indicating that Martin had weaker evidence against the null hypothesis that the outside space has no effect on the behavior change.
+
+-   Including income directly addresses one important source of endogeneity: selection into housing with outside space based on socioeconomic status. However, the estimate should still be interpreted as correlational rather than causal.
+
+# Question 6
+
+## Policy Implications
+
+-   In the short run, policies should focus on expanding effective access to safe outdoor space, particularly for households living in dense or space-constrained housing. Potential interventions include keeping parks, playgrounds, and open streets accessible during public health emergencies; creating temporary outdoor areas near high-density housing (e.g., pop-up pedestrian zones or shared courtyards); and providing clear guidance to building managers to keep shared outdoor spaces open and safely managed rather than fully closed. These policies may be effective because access to outdoor space can reduce the psychological and practical costs of staying home, making compliance with broader behavioral guidelines more feasible.
+
+-   In the long run, the findings point to housing and urban planning policies that incorporate outdoor access as a public health input. Examples include encouraging or subsidizing the construction of balconies, terraces, or ventilated shared courtyards in multi-family housing; revising zoning or building codes to prioritize green space in high-density areas; and targeting housing improvements toward lower-income neighborhoods that are less likely to have private outdoor access. Such policies may have lasting benefits beyond pandemics by improving mental health, well-being, and resilience to future public health shocks.
+
+## Additional Quantitative Data Collection
+
+-   First, housing characteristics would be critical. Data on housing type (houses or apartments), number of rooms, crowding (rooms per person), ownership status, and whether outdoor space is private or shared would allow for a more precise characterization of living conditions and help distinguish the mechanisms through which outside space operates.
+
+-   Second, individual and household characteristics such as age, education, employment status, ability to work from home, household size, presence of children or elderly members, and baseline health risk would help account for differences in both exposure risk and capacity to change behavior. These variables would reduce omitted-variable bias and enable heterogeneity analyses across demographic groups.
+
+-   Third, local context variables, such as neighborhood density, urban versus suburban location, local COVID-19 case rates, and policy stringency measures, would help separate the effect of outside space from broader environmental and policy conditions that influence behavior.
+
+-   Finally, behavioral detail and dynamics would improve interpretation. Rather than a single indicator for behavior change, more granular measures (e.g., masking, social distancing, avoidance of gatherings, time spent at home) and panel data tracking individuals over time would allow researchers to examine which behaviors are most affected by outside space and whether effects persist or evolve as conditions change.
+
+# Question 7
+
+## Methods
+
+-   I would collect qualitative data through in-depth, semi-structured interviews, potentially supplemented by ethnographic observation.
+
+## Questions asked
+
+-   I would conduct open-ended interviews with individuals or households, using a semi-structured interview guide.
+
+-   First, I would ask respondents to describe how their daily behaviors changed during the pandemic, including specific behaviors such as staying home, avoiding gatherings, mask use, and use of public spaces.
+
+    -   This helps clarify what “behavior change” means in practice and whether different respondents interpret it similarly.
+
+-   Second, I would ask detailed questions about housing and outside space
+
+    -   What types of outside space they had access to (private, shared, public nearby)
+
+    -   How frequently and for what purposes they used these spaces
+
+    -   Whether outside space affected their willingness or ability to comply with public health guidance
+
+    -   These questions are designed to uncover the mechanisms through which outside space may facilitate behavior change
+
+-   Third, I would investigate constraints and trade-offs, asking respondents what made behavior change difficult, what they felt they were giving up, and how housing conditions shaped those trade-offs.
+
+    -   This can reveal barriers that are difficult to quantify, such as mental health strain, caregiving responsibilities, or household conflicts.
+
+-   Finally, I would ask respondents how local rules, building management decisions, and neighborhood norms influenced their behavior.
+
+    -   These questions help contextualize individual decisions within broader institutional and social environments.
+
+## Sampling strategy
+
+-   I would use purposeful sampling, focusing on respondents with key characteristics (e.g., high versus low income levels, single apartment or family house, urban versus suburban areas)
+
+## How qualitative data augments the quantitative analysis
+
+-   First, qualitative analysis can interpret the regression coefficients by explaining how behavior changed in real life and how outside space affected it.
+
+-   Second, qualitative analysis can help identify omitted variables, such as social norms, building rules, or conditions of personal well-being.
+
+## Ethnographic observation
+
+-   Yes. I would incorporate an ethnographic observation, such as observing public spaces in apartment buildings and neighborhoods.
+
+## Values of ethnographic observation
+
+-   Ethnographic observations could document the condition of outdoor spaces, how they were actually used, and the nature of social interactions.
+
+-   These observations could help researchers identify factors respondents ignored, such as their actual behaviors rather than their stated ones.
+
+## Effects on answers to step 6
+
+-   The observations could help understand the mechanisms and reasons behind the effects of the external environment on behavior change.
+
+-   For example, simply expanding nominal access to public spaces may be insufficient and could even be counterproductive if those spaces are perceived as unsafe or become associated with disorder. Effective policy design therefore requires ensuring that outdoor spaces are safe, well-managed, and socially acceptable in practice.
